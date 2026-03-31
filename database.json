@@ -1,0 +1,123 @@
+{
+  "registeredUsers": [
+    {
+      "username": "Abdullah123",
+      "password": "Abdul123"
+    },
+    {
+      "username": "Abdulla123",
+      "password": "Abdul123"
+    }
+  ],
+  "complaints": [
+    {
+      "id": 1774945925481,
+      "category": "CM portal",
+      "name": "Abdullah",
+      "phone": "03219788297",
+      "location": "Chak no 13 JB sarwala",
+      "status": "Resolved",
+      "timestamp": "31/03/2026, 13:32:05",
+      "timestampMs": 1774945925481,
+      "addedBy": "Abdullah123"
+    },
+    {
+      "id": 1774945913244,
+      "category": "CM portal",
+      "name": "Abdullah",
+      "phone": "03219788297",
+      "location": "Chak no 13 JB sarwala",
+      "status": "Resolved",
+      "timestamp": "31/03/2026, 13:31:53",
+      "timestampMs": 1774945913244,
+      "addedBy": "Abdullah123"
+    },
+    {
+      "id": 1774939862869,
+      "category": "Sewerage Overflow",
+      "name": "Abdullah",
+      "phone": "03219788297",
+      "location": "Chak no 13 JB sarwala",
+      "status": "Resolved",
+      "timestamp": "31/03/2026, 11:51:02",
+      "timestampMs": 1774939862869,
+      "addedBy": "Abdullah123"
+    },
+    {
+      "id": 1774939836587,
+      "category": "Sewerage Overflow",
+      "name": "Abdullah",
+      "phone": "03219788297",
+      "location": "Chak no 13 JB sarwala",
+      "status": "Resolved",
+      "timestamp": "31/03/2026, 11:50:36",
+      "timestampMs": 1774939836587,
+      "addedBy": "Abdulla123"
+    },
+    {
+      "id": 1774938713881,
+      "category": "Low Pressure",
+      "name": "Abdullah",
+      "phone": "03219788297",
+      "location": "Chak no 13 JB sarwala",
+      "status": "Remaining",
+      "timestamp": "31/03/2026, 11:31:53",
+      "timestampMs": 1774938713881
+    },
+    {
+      "id": 1774938704073,
+      "category": "Water Leakage",
+      "name": "Abdullah",
+      "phone": "03219788297",
+      "location": "Chak no 13 JB sarwala",
+      "status": "Forwarded",
+      "timestamp": "31/03/2026, 11:31:44",
+      "timestampMs": 1774938704073
+    },
+    {
+      "id": 1774938394888,
+      "category": "Water Leakage",
+      "name": "Abdullah",
+      "phone": "03219788297",
+      "location": "Chak no 13 JB sarwala",
+      "status": "Resolved",
+      "timestamp": "31/03/2026, 11:26:34"
+    },
+    {
+      "id": 1774938382922,
+      "category": "Water Leakage",
+      "name": "Abdullah",
+      "phone": "03219788297",
+      "location": "Chak no 13 JB sarwala",
+      "status": "Resolved",
+      "timestamp": "31/03/2026, 11:26:22"
+    },
+    {
+      "id": 1774937693181,
+      "category": "Sewerage Overflow",
+      "name": "Abdullah",
+      "phone": "03219788297",
+      "location": "Chak no 13 JB sarwala",
+      "status": "Resolved",
+      "timestamp": "31/03/2026, 11:14:53"
+    },
+    {
+      "id": 1,
+      "category": "Water Leakage",
+      "name": "Ahmad Khan",
+      "phone": "03001234567",
+      "location": "Main Street, Block A",
+      "status": "Remaining",
+      "timestamp": "3/30/2026, 11:13:38 AM"
+    },
+    {
+      "id": 2,
+      "category": "Sewerage Overflow",
+      "name": "Sara Ali",
+      "phone": "03339876543",
+      "location": "Main Road, Block C",
+      "status": "Resolved",
+      "timestamp": "3/29/2026, 11:13:38 AM"
+    }
+  ]
+}

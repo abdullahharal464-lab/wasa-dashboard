@@ -1,0 +1,1170 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WASA Complaint Dashboard</title>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --wasa-blue: #003366;
+      --wasa-blue-light: #004d99;
+      --bg-color: #f1f5f9;
+      --card-bg: #ffffff;
+      --text-primary: #1e293b;
+      --text-secondary: #64748b;
+      --resolved-color: #10b981;
+      --remaining-color: #ef4444;
+      --not-related-color: #94a3b8;
+      --forwarded-color: #3b82f6;
+      --border-radius: 12px;
+      --shadow-subtle: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+      --shadow-hover: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-primary);
+      min-height: 100vh;
+    }
+
+    /* Utilities */
+    .hidden {
+      display: none !important;
+    }
+
+    /* App Header */
+    .app-header {
+      background-color: var(--wasa-blue);
+      color: white;
+      padding: 1.5rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .header-title {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .header-title h1 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      letter-spacing: -0.025em;
+      margin: 0;
+    }
+
+    .auth-controls {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .auth-badge {
+      background-color: rgba(255, 255, 255, 0.2);
+      padding: 0.5rem 1rem;
+      border-radius: 20px;
+      font-size: 0.875rem;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+
+    .btn {
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      border: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.9rem;
+    }
+
+    .btn-primary {
+      background-color: var(--wasa-blue);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background-color: var(--wasa-blue-light);
+    }
+
+    .btn-outline {
+      background-color: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      color: white;
+    }
+
+    .btn-outline:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .btn-icon-only {
+      padding: 0.5rem;
+      border-radius: 50%;
+      background-color: var(--wasa-blue);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 48px;
+      height: 48px;
+      box-shadow: 0 4px 10px rgba(0, 51, 102, 0.3);
+      transition: transform 0.2s;
+    }
+
+    .btn-icon-only:hover {
+      transform: scale(1.05);
+    }
+
+    /* Login Area */
+    .login-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: calc(100vh - 80px);
+    }
+
+    .login-card {
+      background: var(--card-bg);
+      padding: 2.5rem;
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow-subtle);
+      width: 100%;
+      max-width: 400px;
+      text-align: center;
+    }
+
+    .login-card h2 {
+      color: var(--wasa-blue);
+      margin-top: 1rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .login-card p {
+      color: var(--text-secondary);
+      margin-bottom: 2rem;
+      font-size: 0.9rem;
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+      text-align: left;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+      color: var(--text-primary);
+      font-size: 0.9rem;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      font-size: 1rem;
+      transition: border-color 0.2s;
+    }
+
+    .form-control:focus {
+      outline: none;
+      border-color: var(--wasa-blue);
+      box-shadow: 0 0 0 3px rgba(0, 51, 102, 0.1);
+    }
+
+    .login-btn-submit {
+      width: 100%;
+      padding: 0.75rem;
+      font-size: 1rem;
+      margin-top: 1rem;
+      margin-bottom: 0.5rem;
+    }
+
+    /* Dashboard Container */
+    .dashboard-container {
+      padding: 2rem;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .dashboard-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+    }
+
+    .dashboard-header h2 {
+      font-size: 1.75rem;
+      color: var(--wasa-blue);
+      margin: 0;
+    }
+
+    .grid-4x2 {
+      display: grid;
+      gap: 1.5rem;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    }
+
+    @media (min-width: 1024px) {
+      .grid-4x2 {
+        grid-template-columns: repeat(4, 1fr);
+      }
+    }
+
+    /* Category Card */
+    .category-card {
+      background: var(--card-bg);
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow-subtle);
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .category-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-hover);
+    }
+
+    .category-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background: var(--wasa-blue);
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .icon-wrapper {
+      background-color: rgba(0, 51, 102, 0.1);
+      color: var(--wasa-blue);
+      padding: 0.75rem;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .card-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      line-height: 1.2;
+      margin: 0;
+    }
+
+    .status-counters {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .counter-item {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .counter-label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+    }
+
+    .counter-value {
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+
+    .c-total .counter-label,
+    .c-total .counter-value {
+      color: var(--wasa-blue);
+    }
+
+    .c-resolved .counter-label,
+    .c-resolved .counter-value {
+      color: var(--resolved-color);
+    }
+
+    .c-remaining .counter-label,
+    .c-remaining .counter-value {
+      color: var(--remaining-color);
+    }
+
+    .c-inprogress .counter-label,
+    .c-inprogress .counter-value {
+      color: #f59e0b;
+    }
+
+    .c-pending .counter-label,
+    .c-pending .counter-value {
+      color: var(--remaining-color);
+    }
+
+    .c-notrelated .counter-label,
+    .c-notrelated .counter-value {
+      color: var(--not-related-color);
+    }
+
+    .c-forwarded .counter-label,
+    .c-forwarded .counter-value {
+      color: var(--forwarded-color);
+    }
+
+    .card-actions {
+      margin-top: auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 1rem;
+      border-top: 1px solid #e2e8f0;
+    }
+
+    .view-details-btn {
+      background: transparent;
+      color: var(--wasa-blue);
+      font-size: 0.9rem;
+      font-weight: 500;
+      padding: 0.5rem 0;
+      cursor: pointer;
+      border: none;
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+
+    .view-details-btn:hover {
+      text-decoration: underline;
+    }
+
+    /* Modal */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(15, 23, 42, 0.6);
+      backdrop-filter: blur(4px);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 50;
+      padding: 1rem;
+    }
+
+    .modal-content {
+      background: var(--card-bg);
+      border-radius: var(--border-radius);
+      width: 100%;
+      max-width: 500px;
+      box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+      overflow: hidden;
+      animation: modalIn 0.3s ease-out;
+    }
+
+    @keyframes modalIn {
+      from {
+        opacity: 0;
+        transform: scale(0.95) translateY(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+      }
+    }
+
+    .modal-header {
+      padding: 1.5rem;
+      border-bottom: 1px solid #e2e8f0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-header h3 {
+      font-size: 1.25rem;
+      color: var(--wasa-blue);
+      margin: 0;
+    }
+
+    .close-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-secondary);
+      cursor: pointer;
+      padding: 0.25rem;
+      font-size: 1.5rem;
+      line-height: 1;
+      border-radius: 4px;
+    }
+
+    .close-btn:hover {
+      background: #f1f5f9;
+      color: var(--text-primary);
+    }
+
+    .modal-body {
+      padding: 1.5rem;
+    }
+
+    .modal-footer {
+      padding: 1.25rem 1.5rem;
+      background: #f8fafc;
+      border-top: 1px solid #e2e8f0;
+      display: flex;
+      justify-content: flex-end;
+      gap: 1rem;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
+    /* Table View */
+    .table-container {
+      background: var(--card-bg);
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow-subtle);
+      overflow: auto;
+      margin-top: 1rem;
+    }
+
+    .table-header {
+      padding: 1.5rem;
+      border-bottom: 1px solid #e2e8f0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .search-bar {
+      display: flex;
+      align-items: center;
+      background: #f1f5f9;
+      border-radius: 20px;
+      padding: 0.5rem 1rem;
+      width: 100%;
+      max-width: 300px;
+    }
+
+    .search-bar input {
+      background: transparent;
+      border: none;
+      outline: none;
+      width: 100%;
+      padding-left: 0.5rem;
+      font-size: 0.9rem;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 800px;
+    }
+
+    th {
+      background-color: #f8fafc;
+      color: var(--text-secondary);
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 1rem 1.5rem;
+      text-align: left;
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    td {
+      padding: 1rem 1.5rem;
+      border-bottom: 1px solid #e2e8f0;
+      font-size: 0.9rem;
+    }
+
+    tr:hover {
+      background-color: #f8fafc;
+    }
+
+    .badge {
+      padding: 0.25rem 0.75rem;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      display: inline-block;
+      text-align: center;
+    }
+
+    .badge-total {
+      background: rgba(0, 51, 102, 0.1);
+      color: var(--wasa-blue);
+    }
+
+    .badge-resolved {
+      background: rgba(16, 185, 129, 0.1);
+      color: var(--resolved-color);
+    }
+
+    .badge-remaining {
+      background: rgba(239, 68, 68, 0.1);
+      color: var(--remaining-color);
+    }
+
+    .badge-notrelated {
+      background: rgba(148, 163, 184, 0.1);
+      color: var(--not-related-color);
+    }
+
+    .badge-forwarded {
+      background: rgba(59, 130, 246, 0.1);
+      color: var(--forwarded-color);
+    }
+
+    .badge-inprogress {
+      background: rgba(245, 158, 11, 0.1);
+      color: #f59e0b;
+    }
+
+    .badge-pending {
+      background: rgba(239, 68, 68, 0.1);
+      color: var(--remaining-color);
+    }
+
+    .back-btn {
+      background: transparent;
+      border: none;
+      color: var(--wasa-blue);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-weight: 500;
+      margin-bottom: 1rem;
+    }
+
+    .back-btn:hover {
+      text-decoration: underline;
+    }
+
+    select.form-control {
+      appearance: none;
+      background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+      background-repeat: no-repeat;
+      background-position: right 1rem center;
+      background-size: 1em;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- HEADER -->
+  <header class="app-header">
+    <div class="header-title">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+        stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5C6 11.1 5 13 5 15a7 7 0 0 0 7 7z">
+        </path>
+      </svg>
+      <h1>WASA - Complaints Dashboard</h1>
+    </div>
+    <div class="auth-controls" id="auth-controls">
+      <!-- Will be injected via JS -->
+    </div>
+  </header>
+
+  <!-- MAIN APP CONTAINER -->
+  <main class="dashboard-container" id="main-container">
+    <!-- Views will be injected via JS -->
+  </main>
+
+  <!-- MODAL CONTAINER -->
+  <div id="modal-container"></div>
+
+  <!-- VANILLA INLINE JAVASCRIPT LOGIC -->
+  <script>
+    // --- Data & State ---
+    const SVGs = {
+      Droplet: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5C6 11.1 5 13 5 15a7 7 0 0 0 7 7z"></path></svg>`,
+      Waves: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="2 6 6 10 10 6 14 10 18 6 22 10"></polyline><polyline points="2 18 6 22 10 18 14 22 18 18 22 22"></polyline><polyline points="2 12 6 16 10 12 14 16 18 12 22 16"></polyline></svg>`,
+      Gauge: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 14a2 2 0 1 0 0-4 2 2 0 0 0 0 4z"></path><path d="M15.42 15.42 19 19"></path><path d="M8.58 15.42 5 19"></path><path d="M22 12a10 10 0 1 0-20 0"></path><path d="M12 2v2"></path><path d="M12 20v2"></path><path d="M2 12h2"></path><path d="M20 12h2"></path></svg>`,
+      Alert: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>`,
+      Receipt: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1-2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1-2-1Z"></path><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"></path><path d="M12 17V7"></path></svg>`,
+      Wrench: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg>`,
+      Bug: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="8" height="14" x="8" y="6" rx="4"></rect><path d="m19 7-3 2"></path><path d="m5 7 3 2"></path><path d="m19 19-3-2"></path><path d="m5 19 3-2"></path><path d="M20 13h-4"></path><path d="M4 13h4"></path><path d="m10 4 1 2"></path><path d="m14 4-1 2"></path></svg>`,
+      Plug: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22v-5"></path><path d="M9 8V2"></path><path d="M15 8V2"></path><path d="M18 8v5a4 4 0 0 1-4 4h-4a4 4 0 0 1-4-4V8Z"></path></svg>`,
+      Plus: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>`,
+      Search: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>`,
+      ChevronLeft: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>`,
+      LogIn: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path><polyline points="10 17 15 12 10 7"></polyline><line x1="15" y1="12" x2="3" y2="12"></line></svg>`,
+      LogOut: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>`,
+      Users: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline; margin-right:4px; vertical-align:middle;"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>`,
+      Globe: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>`,
+      Activity: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>`,
+      FileText: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>`,
+      Building: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2" ry="2"></rect><path d="M9 22v-4h6v4"></path><path d="M8 6h.01"></path><path d="M16 6h.01"></path><path d="M12 6h.01"></path><path d="M12 10h.01"></path><path d="M12 14h.01"></path><path d="M16 10h.01"></path><path d="M16 14h.01"></path><path d="M8 10h.01"></path><path d="M8 14h.01"></path></svg>`,
+      Shield: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>`,
+      Layers: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>`,
+      MessageSquare: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>`,
+      Laptop: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="2" y1="20" x2="22" y2="20"></line></svg>`,
+      MapPin: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>`,
+      Disc: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="3"></circle></svg>`,
+      FilePlus: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="12" y1="18" x2="12" y2="12"></line><line x1="9" y1="15" x2="15" y2="15"></line></svg>`
+    };
+
+    const CATEGORIES = [
+      { id: '1', name: 'CM portal', iconName: 'Globe' },
+      { id: '2', name: 'Health CMS', iconName: 'Activity' },
+      { id: '3', name: 'Pakistan Citizen Portal', iconName: 'Users' },
+      { id: '4', name: 'Physical Complaints', iconName: 'FileText' },
+      { id: '5', name: 'DC office Complaints', iconName: 'Building' },
+      { id: '6', name: 'Special Branch', iconName: 'Shield' },
+      { id: '7', name: 'SMU Complaints', iconName: 'Layers' },
+      { id: '8', name: 'Complaint cell Complaints', iconName: 'MessageSquare' },
+      { id: '9', name: 'Online Complaints', iconName: 'Laptop' },
+      { id: '10', name: 'Surveyor Complaints', iconName: 'MapPin' },
+      { id: '11', name: 'Manhole Complaints', iconName: 'Disc' },
+      { id: '12', name: 'New Demands', iconName: 'FilePlus' },
+      { id: '13', name: 'Category 13', iconName: 'Wrench' },
+      { id: '14', name: 'Category 14', iconName: 'Waves' },
+      { id: '15', name: 'Category 15', iconName: 'Plug' },
+      { id: '16', name: 'Category 16', iconName: 'Bug' }
+    ];
+
+    const LOCATIONS = ['Block A', 'Block B', 'Block C', 'Block D', 'Block E', 'Block F', 'Block G'];
+    const STATUSES = ['Resolved', 'Inprogress', 'Pending'];
+
+    const DUMMY_COMPLAINTS = [
+      { id: 1, category: 'Water Leakage', name: 'Ahmad Khan', phone: '03001234567', location: 'Main Street, Block A', status: 'Remaining', timestamp: new Date(Date.now() - 86400000).toLocaleString() },
+      { id: 2, category: 'Sewerage Overflow', name: 'Sara Ali', phone: '03339876543', location: 'Main Road, Block C', status: 'Resolved', timestamp: new Date(Date.now() - 172800000).toLocaleString() }
+    ];
+
+    // Try pulling auto-login session
+    let savedUser = null;
+    try {
+      const stored = localStorage.getItem('wasa_current_user');
+      if (stored) savedUser = JSON.parse(stored);
+    } catch (e) { }
+
+    let state = {
+      user: savedUser,
+      view: savedUser ? 'dashboard' : 'login',
+      activeCategory: null,
+      searchTerm: '',
+      timeFilter: 'Today', // Defaults to showing only Today's complaints
+      registeredUsers: [],
+      loginError: '',
+      registerError: '',
+      complaints: []
+    };
+
+    // --- Fetch initial Database from Server OR Local Storage ---
+    fetch('/api/data')
+      .then(res => res.json())
+      .then(data => {
+        state.registeredUsers = data.registeredUsers || [];
+        state.complaints = data.complaints || [];
+        // Backup to local storage
+        localStorage.setItem('wasa_backup', JSON.stringify({ registeredUsers: state.registeredUsers, complaints: state.complaints }));
+        render();
+      })
+      .catch(e => {
+        // Offline Mode: Pull from Browser Memory
+        try {
+          const saved = localStorage.getItem('wasa_backup');
+          if (saved) {
+            const parsedData = JSON.parse(saved);
+            state.registeredUsers = parsedData.registeredUsers || [];
+            state.complaints = parsedData.complaints || [];
+          } else {
+            // No backup found, use dummy defaults
+            state.complaints = DUMMY_COMPLAINTS;
+          }
+        } catch (err) {
+          state.complaints = DUMMY_COMPLAINTS;
+        }
+        render();
+      });
+
+    function saveToServer() {
+      // 1. Immediately save to Browser Local Storage (Works offline instantly)
+      try {
+        localStorage.setItem('wasa_backup', JSON.stringify({
+          registeredUsers: state.registeredUsers,
+          complaints: state.complaints
+        }));
+      } catch (err) {
+        // Browser explicitly blocked storage
+      }
+
+      // 2. Try pushing to the network server (Silently fails if server is turned off)
+      fetch('/api/data', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          registeredUsers: state.registeredUsers,
+          complaints: state.complaints
+        })
+      }).catch(err => { /* Do nothing, already saved offline */ });
+    }
+
+    // --- State Methods ---
+    function setState(newState) {
+      state = { ...state, ...newState };
+
+      // Auto-save user session so they stay logged in
+      if ('user' in newState) {
+        if (newState.user) {
+          localStorage.setItem('wasa_current_user', JSON.stringify(newState.user));
+        } else {
+          localStorage.removeItem('wasa_current_user');
+          state.view = 'login'; // Kick them back to login on logout
+        }
+      }
+      render();
+    }
+
+    function addComplaint(newComp) {
+      state.complaints.unshift(newComp);
+      saveToServer();
+      render();
+    }
+
+    function updateComplaintStatus(id, newStatus) {
+      const comp = state.complaints.find(c => c.id == id);
+      if (comp) {
+        comp.status = newStatus;
+        saveToServer();
+      }
+      render();
+    }
+
+    // --- Rendering Logic ---
+    function render() {
+      renderHeader();
+
+      const main = document.getElementById('main-container');
+      if (state.view === 'login') {
+        main.innerHTML = getLoginHTML();
+        main.className = 'login-container';
+      } else if (state.view === 'register') {
+        main.innerHTML = getRegisterHTML();
+        main.className = 'login-container';
+      } else if (state.view === 'dashboard') {
+        main.innerHTML = getDashboardHTML();
+        main.className = 'dashboard-container';
+      } else if (state.view === 'table') {
+        main.innerHTML = getTableHTML();
+        main.className = 'dashboard-container';
+      }
+    }
+
+    function renderHeader() {
+      const authDiv = document.getElementById('auth-controls');
+      const isAuth = state.user !== null;
+      if (isAuth) {
+        authDiv.innerHTML = `
+          <span class="auth-badge">${SVGs.Users} ${state.user.username} (Staff)</span>
+          <button onclick="setState({user: null})" class="btn btn-outline" title="Logout">
+            ${SVGs.LogOut} Logout
+          </button>
+        `;
+      } else {
+        authDiv.innerHTML = `
+          <span class="auth-badge" style="background-color: rgba(255,255,255,0.1)">Read-Only View</span>
+          <button onclick="setState({view: 'login'})" class="btn btn-outline">
+            ${SVGs.LogIn} Staff Login
+          </button>
+        `;
+      }
+    }
+
+    function getLoginHTML() {
+      const errorMsg = state.loginError ? `<div style="color: red; font-size: 0.85rem; margin-bottom: 1rem;">${state.loginError}</div>` : '';
+      return `
+        <div class="login-card">
+          <div style="display:flex; justify-content:center; margin-bottom:1rem; color:var(--wasa-blue);">
+            ${SVGs.Droplet.replace('<svg', '<svg width="48" height="48"')}
+          </div>
+          <h2>WASA Staff Portal</h2>
+          <p>Satellite Town Division</p>
+          ${errorMsg}
+          <form onsubmit="handleLoginSubmit(event)">
+            <div class="form-group">
+              <label>Staff ID</label>
+              <input type="text" id="login-id" class="form-control" placeholder="Enter ID" required />
+            </div>
+            <div class="form-group">
+              <label>Password</label>
+              <input type="password" id="login-password" class="form-control" placeholder="Enter Password" required />
+            </div>
+            <button type="submit" class="btn btn-primary login-btn-submit">Login</button>
+            <div style="margin-top: 1rem; font-size: 0.9rem;">
+              Don't have an ID? <a href="#" style="color: var(--wasa-blue); text-decoration: none; font-weight: 500;" onclick="event.preventDefault(); setState({view: 'register', loginError: '', registerError: ''})">Register Here</a>
+            </div>
+            <hr style="margin: 1.5rem 0; border: none; border-top: 1px solid #cbd5e1;" />
+            <button type="button" class="btn btn-outline" style="width: 100%; color: var(--text-secondary); border-color: #cbd5e1;" onclick="setState({view: 'dashboard'})">
+              Continue as Guest (Read-Only)
+            </button>
+          </form>
+        </div>
+      `;
+    }
+
+    function handleLoginSubmit(e) {
+      e.preventDefault();
+      const id = document.getElementById('login-id').value.trim();
+      const pass = document.getElementById('login-password').value;
+
+      const foundUser = state.registeredUsers.find(u => u.username === id && u.password === pass);
+
+      if (foundUser) {
+        setState({ user: { username: id, role: 'WASA_Staff' }, view: 'dashboard', loginError: '' });
+      } else {
+        setState({ loginError: 'Invalid ID or Password. Please register first.' });
+      }
+    }
+
+    function getRegisterHTML() {
+      const errorMsg = state.registerError ? `<div style="color: red; font-size: 0.85rem; margin-bottom: 1rem;">${state.registerError}</div>` : '';
+      return `
+        <div class="login-card" style="max-width: 450px;">
+          <h2>Staff Registration</h2>
+          <p>Create a new WASA Staff ID</p>
+          ${errorMsg}
+          <form onsubmit="handleRegisterSubmit(event)">
+            <div class="form-group">
+              <label>Choose Staff ID</label>
+              <input type="text" id="reg-id" class="form-control" placeholder="E.g. Ali123" required />
+            </div>
+            <div class="form-group">
+              <label>Create Password</label>
+              <input type="password" id="reg-password" class="form-control" placeholder="Minimum 6 characters" required minlength="6"/>
+            </div>
+            <button type="submit" class="btn btn-primary login-btn-submit" style="background-color: var(--resolved-color);">Register Account</button>
+            <div style="margin-top: 1rem; font-size: 0.9rem;">
+              Already have an account? <a href="#" style="color: var(--wasa-blue); text-decoration: none; font-weight: 500;" onclick="event.preventDefault(); setState({view: 'login', loginError: '', registerError: ''})">Back to Login</a>
+            </div>
+          </form>
+        </div>
+      `;
+    }
+
+    function handleRegisterSubmit(e) {
+      e.preventDefault();
+      const id = document.getElementById('reg-id').value.trim();
+      const pass = document.getElementById('reg-password').value;
+
+      if (state.registeredUsers.some(u => u.username === id)) {
+        setState({ registerError: 'This Staff ID is already taken. Please choose another one.' });
+        return;
+      }
+
+      state.registeredUsers.push({ username: id, password: pass });
+      saveToServer();
+      setState({ user: { username: id, role: 'WASA_Staff' }, view: 'dashboard', registerError: '', loginError: '' });
+      alert('Registration successful! You are now logged in as ' + id);
+    }
+
+    // Helper to safely filter dates across all regions
+    function getFilteredComplaints(complaintList) {
+      let listToFilter = complaintList;
+
+      // Ensure logged-in members only see their own data, unless they are admin
+      if (state.user && state.user.username.toLowerCase() !== 'admin') {
+        listToFilter = complaintList.filter(c => c.addedBy === state.user.username);
+      }
+
+      if (state.timeFilter === 'All Time') return listToFilter;
+
+      const startOfToday = new Date();
+      startOfToday.setHours(0, 0, 0, 0);
+      const startOfTodayMs = startOfToday.getTime();
+
+      return listToFilter.filter(c => {
+        let cTime = c.timestampMs; // Best source of truth
+
+        if (!cTime) {
+          // Fallback mechanism for older records created before this update
+          cTime = new Date(c.timestamp).getTime();
+          if (isNaN(cTime)) {
+            const parts = c.timestamp.split(',')[0].split(/[\/\-]/);
+            if (parts.length === 3) {
+              const p1 = parseInt(parts[0]);
+              const p2 = parseInt(parts[1]);
+              const year = parseInt(parts[2]);
+              // Handle DD/MM/YYYY parsing gracefully
+              if (p1 > 12) cTime = new Date(year, p2 - 1, p1).getTime();
+              else cTime = new Date(year, p1 - 1, p2).getTime();
+            }
+          }
+        }
+
+        if (state.timeFilter === 'Today') return cTime >= startOfTodayMs;
+        if (state.timeFilter === 'This Week') return cTime >= (startOfTodayMs - (6 * 86400000));
+        if (state.timeFilter === 'This Month') {
+          const monthStart = new Date(startOfToday.getFullYear(), startOfToday.getMonth(), 1).getTime();
+          return cTime >= monthStart;
+        }
+        return true;
+      });
+    }
+
+    function getDashboardHTML() {
+      const isAuth = state.user !== null;
+
+      const filterOptions = ['Today', 'This Week', 'This Month', 'All Time'].map(f =>
+        `<label style="margin-left: 1rem; cursor: pointer; font-size: 0.9rem; margin-top: 0.25rem;">
+          <input type="radio" name="dashTimeFilter" value="${f}" ${state.timeFilter === f ? 'checked' : ''} onchange="setState({timeFilter: this.value})"> ${f}
+        </label>`
+      ).join('');
+
+      let gridHTML = `
+        <div class="dashboard-header" style="display:flex; flex-wrap:wrap; gap:1rem; align-items:center;">
+          <h2>Division Overview</h2>
+          <div style="background: white; padding: 0.5rem 1rem; border-radius: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid #e2e8f0; margin-left: auto;">
+            <strong style="font-size: 0.85rem; color: var(--text-secondary); text-transform: uppercase;">Range Date:</strong>
+            ${filterOptions}
+          </div>
+        </div>
+        <div class="grid-4x2">`;
+
+      const visibleComplaints = getFilteredComplaints(state.complaints);
+
+      CATEGORIES.forEach(cat => {
+        // Calculate stats
+        let counts = { Total: 0, Resolved: 0, Inprogress: 0, Pending: 0 };
+        visibleComplaints.forEach(c => {
+          if (c.category === cat.name) {
+            counts.Total++;
+            if (counts[c.status] !== undefined) {
+              counts[c.status]++;
+            } else if (c.status === 'Remaining') {
+              // Backward compatibility for old testing records before status changes
+              counts.Pending++;
+            }
+          }
+        });
+
+        const iconSVG = SVGs[cat.iconName];
+
+        let actionsHTML = `<button class="view-details-btn" onclick="openTable('${cat.name}')">${SVGs.Search} View Details</button>`;
+        if (isAuth) {
+          actionsHTML += `<button class="btn btn-icon-only" onclick="openModal('${cat.name}')" title="Add New Complaint: ${cat.name}">${SVGs.Plus}</button>`;
+        }
+
+        gridHTML += `
+          <div class="category-card">
+            <div class="card-header">
+              <div class="icon-wrapper">${iconSVG}</div>
+              <h3 class="card-title">${cat.name}</h3>
+            </div>
+            <div class="status-counters">
+              <div class="counter-item c-total"><span class="counter-label">Total</span><span class="counter-value">${counts.Total}</span></div>
+              <div class="counter-item c-resolved"><span class="counter-label">Resolved</span><span class="counter-value">${counts.Resolved}</span></div>
+              <div class="counter-item c-inprogress"><span class="counter-label">Inprogress</span><span class="counter-value">${counts.Inprogress}</span></div>
+              <div class="counter-item c-pending"><span class="counter-label">Pending</span><span class="counter-value">${counts.Pending}</span></div>
+            </div>
+            <div class="card-actions">
+              ${actionsHTML}
+            </div>
+          </div>
+        `;
+      });
+      gridHTML += `</div>`;
+      return gridHTML;
+    }
+
+    function openTable(categoryName) {
+      setState({ view: 'table', activeCategory: categoryName, searchTerm: '' });
+    }
+
+    function getTableHTML() {
+      const isAuth = state.user !== null;
+
+      const visibleComplaints = getFilteredComplaints(state.complaints);
+      let filtered = visibleComplaints.filter(c => c.category === state.activeCategory);
+
+      if (state.searchTerm) {
+        const lowerTerm = state.searchTerm.toLowerCase();
+        filtered = filtered.filter(c => c.name.toLowerCase().includes(lowerTerm) || c.phone.includes(lowerTerm));
+      }
+
+      let tbody = '';
+      if (filtered.length === 0) {
+        tbody = `<tr><td colspan="${isAuth ? 7 : 6}" style="text-align: center; padding: 3rem; color: var(--text-secondary)">No records found.</td></tr>`;
+      } else {
+        filtered.forEach(c => {
+          const badgeClass = `badge badge-${c.status.replace(/\\s+/g, '').toLowerCase()}`;
+          let actionCol = '';
+          if (isAuth) {
+            actionCol = `
+              <td>
+                <select class="form-control" style="padding: 0.25rem 2rem 0.25rem 0.5rem; font-size: 0.8rem; min-width: 120px;" onchange="updateComplaintStatus(${c.id}, this.value)">
+                  ${STATUSES.map(st => `<option value="${st}" ${c.status === st ? 'selected' : ''}>${st}</option>`).join('')}
+                </select>
+              </td>
+            `;
+          }
+
+          tbody += `
+            <tr>
+              <td style="color: var(--text-secondary); font-size: 0.8rem">#${c.id.toString().slice(-6)}</td>
+              <td style="font-weight: 500">${c.name}</td>
+              <td>${c.phone}</td>
+              <td>${c.location}</td>
+              <td><span class="${badgeClass}">${c.status}</span></td>
+              <td style="font-size: 0.8rem; color: var(--text-secondary)">${c.timestamp}</td>
+              ${actionCol}
+            </tr>
+          `;
+        });
+      }
+
+      const filterOptions = ['Today', 'This Week', 'This Month', 'All Time'].map(f =>
+        `<label style="margin-left: 1rem; cursor: pointer; font-size: 0.9rem; margin-top: 0.25rem;">
+          <input type="radio" name="tableTimeFilter" value="${f}" ${state.timeFilter === f ? 'checked' : ''} onchange="setState({timeFilter: this.value})"> ${f}
+        </label>`
+      ).join('');
+
+      return `
+        <div>
+          <button class="back-btn" onclick="setState({view: 'dashboard'})">${SVGs.ChevronLeft} Back to Dashboard</button>
+          <div class="dashboard-header" style="justify-content: flex-start; gap: 2rem; margin-bottom: 1rem">
+            <h2>${state.activeCategory} Complaints</h2>
+            <div style="background: white; padding: 0.5rem 1rem; border-radius: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid #e2e8f0;">
+              <strong style="font-size: 0.85rem; color: var(--text-secondary); text-transform: uppercase;">Time:</strong>
+              ${filterOptions}
+            </div>
+          </div>
+          <div class="table-container">
+            <div class="table-header">
+              <div class="search-bar">
+                ${SVGs.Search}
+                <input type="text" placeholder="Search by name or phone..." value="${state.searchTerm}" oninput="setState({searchTerm: this.value})" />
+              </div>
+              <div style="font-size: 0.9rem; color: var(--text-secondary)">Total Records: <strong>${filtered.length}</strong></div>
+            </div>
+            <table style="min-width: 800px">
+              <thead>
+                <tr><th>ID</th><th>Name</th><th>Phone</th><th>Location</th><th>Status</th><th>Timestamp</th>${isAuth ? '<th>Action</th>' : ''}</tr>
+              </thead>
+              <tbody>${tbody}</tbody>
+            </table>
+          </div>
+        </div>
+      `;
+    }
+
+    // --- Modal Logic ---
+    function openModal(categoryName) {
+      const modalHtml = `
+        <div class="modal-overlay" id="add-complaint-modal">
+          <div class="modal-content text-left">
+            <div class="modal-header">
+              <h3>Add New Complaint - ${categoryName}</h3>
+              <button class="close-btn" onclick="closeModal()">&times;</button>
+            </div>
+            <form onsubmit="handleModalSubmit(event, '${categoryName}')">
+              <div class="modal-body">
+                <div class="form-group">
+                  <label>Complainer Name <span style="color:red">*</span></label>
+                  <input type="text" id="m-name" class="form-control" required />
+                </div>
+                <div class="form-group">
+                  <label>Contact Number (11 Digits) <span style="color:red">*</span></label>
+                  <input type="text" id="m-phone" class="form-control" required placeholder="03001234567" pattern="[0-9]{11}" title="Please enter exactly 11 digits" />
+                </div>
+                <div class="form-group">
+                  <label>Address <span style="color:red">*</span></label>
+                  <input type="text" id="m-address" class="form-control" required placeholder="Enter full address" />
+                </div>
+                <div class="form-group" style="margin:0">
+                  <label>Initial Status</label>
+                  <select id="m-status" class="form-control">
+                    ${STATUSES.map(st => `<option value="${st}">${st}</option>`).join('')}
+                  </select>
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-outline" style="color: var(--text-primary); border-color: #cbd5e1" onclick="closeModal()">Cancel</button>
+                <button type="submit" class="btn btn-primary">Save Complaint</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      `;
+      document.getElementById('modal-container').innerHTML = modalHtml;
+    }
+
+    function closeModal() {
+      document.getElementById('modal-container').innerHTML = '';
+    }
+
+    function handleModalSubmit(e, categoryName) {
+      e.preventDefault();
+      const phone = document.getElementById('m-phone').value;
+      if (phone.replace(/\\D/g, '').length !== 11) {
+        alert("Contact number must be 11 digits.");
+        return;
+      }
+      const now = new Date();
+      const newComplaint = {
+        id: Date.now(),
+        category: categoryName,
+        name: document.getElementById('m-name').value,
+        phone: phone,
+        location: document.getElementById('m-address').value,
+        status: document.getElementById('m-status').value,
+        timestamp: now.toLocaleString(),
+        timestampMs: now.getTime(),
+        addedBy: state.user ? state.user.username : 'Guest'
+      };
+      closeModal();
+      addComplaint(newComplaint);
+    }
+
+  </script>
+</body>
+
+</html>
