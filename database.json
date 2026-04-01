@@ -11,6 +11,17 @@
   ],
   "complaints": [
     {
+      "id": 1775016688039,
+      "category": "CM portal",
+      "name": "Abdullah",
+      "phone": "03219788297",
+      "location": "Chak no 13 JB sarwala",
+      "status": "Resolved",
+      "timestamp": "01/04/2026, 09:11:28",
+      "timestampMs": 1775016688039,
+      "addedBy": "Abdulla123"
+    },
+    {
       "id": 1774945925481,
       "category": "CM portal",
       "name": "Abdullah",
