@@ -700,7 +700,10 @@
 
     // --- Fetch initial Database from Server OR Local Storage ---
     fetch('/api/data')
-      .then(res => res.json())
+      .then(res => {
+        if (!res.ok) throw new Error('Database not connected');
+        return res.json();
+      })
       .then(data => {
         state.registeredUsers = data.registeredUsers || [];
         state.complaints = data.complaints || [];
